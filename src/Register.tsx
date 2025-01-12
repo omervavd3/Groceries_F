@@ -6,10 +6,11 @@ import Card from "react-bootstrap/Card";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const schema = z.object({
   email: z.string().email("Invalid email"),
-  name: z.string().min(3, "Name must be at least 3 characters long"),
+  userName: z.string().min(3, "Name must be at least 3 characters long"),
   password: z
     .string({ invalid_type_error: "Password is required" })
     .min(8, "Password must be at least 8 characters long"),
@@ -30,6 +31,16 @@ const Register = () => {
   const onSubmit = (data: FormData) => {
     reset();
     console.log(data);
+    axios
+      .post("http://localhost:3000/auth/register", data)
+      .then((response) => {
+        console.log(response);
+        navigate("/login");
+      })
+      .catch((error) => {
+        console.error(error);
+        alert("User name or email already exists");
+      });
   };
 
   return (
@@ -56,14 +67,14 @@ const Register = () => {
             <Form.Group className="mb-3" controlId="formBasicName">
               <Form.Label>Name</Form.Label>
               <Form.Control
-                {...register("name", { required: true })}
+                {...register("userName", { required: true })}
                 type="name"
                 placeholder="Enter name"
-                isInvalid={!!errors.name}
+                isInvalid={!!errors.userName}
               />
-              {errors.name && (
+              {errors.userName && (
                 <Form.Control.Feedback type="invalid">
-                  {errors.name.message}
+                  {errors.userName.message}
                 </Form.Control.Feedback>
               )}
             </Form.Group>

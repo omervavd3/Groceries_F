@@ -6,12 +6,12 @@ import Card from "react-bootstrap/Card";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const schema = z.object({
   email: z.string().email("Invalid email"),
   password: z
     .string({ invalid_type_error: "Password is required" })
-    .min(8, "Password must be at least 8 characters long"),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -29,6 +29,16 @@ const Login = () => {
   const onSubmit = (data: FormData) => {
     reset();
     console.log(data);
+    axios
+      .post("http://localhost:3000/auth/login", data)
+      .then((response) => {
+        console.log(response);
+        navigate("/userPage");
+      })
+      .catch((error) => {
+        console.error(error);
+        alert("Invalid email or password");
+      });
   };
 
   return (
